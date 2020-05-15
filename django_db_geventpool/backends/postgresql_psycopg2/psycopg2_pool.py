@@ -35,7 +35,7 @@ class DatabaseConnectionPool(object):
         self.maxsize = maxsize
         self.pool = queue.Queue(maxsize=maxsize)
         self.size = 0
-        logger.debug("pool init [maxsize: {}]".format(self.maxsize))
+        logger.debug("pool init [maxsize: {} {}]".format(self.maxsize, self))
         traceback.print_stack()
 
     def get(self):
@@ -92,6 +92,7 @@ class PostgresConnectionPool(DatabaseConnectionPool):
 
     def create_connection(self):
         conn = self.connect(*self.args, **self.kwargs)
+        logger.debug("opened connection to {}".format(conn))
         # set correct encoding
         conn.set_client_encoding('UTF8')
         return conn
