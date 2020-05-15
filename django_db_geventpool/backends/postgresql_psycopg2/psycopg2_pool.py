@@ -34,9 +34,11 @@ class DatabaseConnectionPool(object):
         self.maxsize = maxsize
         self.pool = queue.Queue(maxsize=maxsize)
         self.size = 0
+        logger.debug("pool init [maxsize: {}]".format(self.maxsize))
 
     def get(self):
         pool = self.pool
+        logger.debug("getting connection from pool [current size: {} maxsize: {} qsize: {}]".format(self.size, self.maxsize, pool.qsize()))
         if self.size >= self.maxsize or pool.qsize():
             new_item = pool.get()
             try:
@@ -62,6 +64,7 @@ class DatabaseConnectionPool(object):
             self.pool.put(item, timeout=2)
             logger.debug("DB connection returned")
         except queue.Full:
+            logger.debug("DB pool full when trying to return it to pool, closing connection")
             item.close()
 
     def closeall(self):
