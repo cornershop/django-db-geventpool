@@ -6,6 +6,7 @@
 # https://github.com/surfly/gevent/blob/master/examples/psycopg2_pool.py
 import logging
 import sys
+import traceback
 logger = logging.getLogger('django.geventpool')
 
 try:
@@ -35,6 +36,7 @@ class DatabaseConnectionPool(object):
         self.pool = queue.Queue(maxsize=maxsize)
         self.size = 0
         logger.debug("pool init [maxsize: {}]".format(self.maxsize))
+        traceback.print_stack()
 
     def get(self):
         pool = self.pool
